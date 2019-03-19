@@ -74,7 +74,7 @@ class MaigoSearchEngine(object):
         configs = pd.read_csv(str(camera_configs_path))
         for i in range(len(configs)):
             config = configs.loc[i, :]
-            name = str(config.name)
+            name = str(config.camera_name)
             device = int(config.device)
             latitude = config.latitude
             longtitude = config.longtitude
