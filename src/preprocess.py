@@ -33,7 +33,7 @@ def align(image_paths, image_size=160, margin=44, gpu_memory_fraction=1.0):
     # aligned_image_paths = []
     for i,image_path in enumerate(image_paths):
         # print('%1d: %s' % (i, image_path))
-        img = misc.imread(os.path.expanduser(str(image_path)))
+        img = misc.imread(str(image_path))
         img_size = np.asarray(img.shape)[0:2]
         try:
             bounding_boxes, _ = detect_face.detect_face(img, minsize, pnet, rnet, onet, threshold, factor)

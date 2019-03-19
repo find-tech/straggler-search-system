@@ -17,8 +17,8 @@ from scipy import misc
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.metrics.pairwise import euclidean_distances
 
-sys.path.append('\\Users\\taro\\Documents\\straggler-search-system\\src')
-#sys.path.append('\\Users\\User\\Documents\\University\\DL\\DLBasic\\Project\\src')
+sss_path = os.path.abspath(os.path.join(os.path.curdir, os.pardir)) # straggler-search-system
+sys.path.append(sss_path + '/src')
 
 from facenet.src import facenet
 from facenet.src.align import detect_face
@@ -59,7 +59,7 @@ class MaigoSearchEngine(object):
 
         self.maigo_db.load(maigo_db_path)
         for maigo in self.maigo_db.people:
-            image, extracted_filepath = align([maigo['image_path']], image_size=self.model.input_image_size, margin=44, gpu_memory_fraction=1.0)
+            image, extracted_filepath = align([main_path / maigo['image_path']], image_size=self.model.input_image_size, margin=44, gpu_memory_fraction=1.0)
             if len(image) == 0:
                 raise ValueError("Image is too small: {}".format(maigo['image_path']))
             feature = self.model(image[0])
@@ -79,7 +79,7 @@ class MaigoSearchEngine(object):
             latitude = config.latitude
             longtitude = config.longtitude
             pos = (latitude, longtitude)
-            storage_path = config.storage_path
+            storage_path = main_path / config.storage_path
             camera = Camera(name, device, pos, storage_path, '../models/haarcascade_frontalface_default.xml', 'jpg')
             self.cameras.append(camera)
         return
@@ -159,6 +159,6 @@ class MaigoSearchEngine(object):
 engine = MaigoSearchEngine(model_path, threshold=0.85)
 engine.build_maigo_db(maigo_db_path)
 engine.build_cameras(camera_configs_path)
-engine.cameras[1].name
+print(engine.cameras[1].name)
 engine.maigo_db.people[0]
 engine.run()
