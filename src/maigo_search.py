@@ -28,6 +28,8 @@ from utils import *
 from preprocess import align
 from camera import Camera
 from database import MaigoDataBase
+from show_result import ResultViewer
+
 
 main_path = pathlib.Path().cwd().parent
 model_path = main_path / 'models' / '20180402-114759' / '20180402-114759.pb'
@@ -99,12 +101,12 @@ class MaigoSearchEngine(object):
         indices = np.argsort(scores)[:n]
         scores = scores[indices]
         cands = []
-        for idx in indices:
+        for idx in range(len(scores)):
             score = scores[idx]
             if score < self.threshold:
                 cand = {
                     'score': score,
-                    'index': idx,
+                    'index': indices[idx],
                     }
                 cands.append(cand)
             else:
@@ -153,8 +155,8 @@ class MaigoSearchEngine(object):
         return results
     
     def alert(self, results):
-        print(results)
-        pass
+        #ResultViewer(results).print()
+        ResultViewer(results).show_gui()
 
 engine = MaigoSearchEngine(model_path, threshold=0.85)
 engine.build_maigo_db(maigo_db_path)
