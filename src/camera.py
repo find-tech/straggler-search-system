@@ -63,7 +63,8 @@ class CameraData(object):
         for i in range(n_face):
             img_path = self.storage_path / 'face_{}.{}'.format(i+1, self.extention)
             self.faces[i]['path'] = img_path
-            cv2.imwrite(str(img_path), self.faces[i]['image'])
+            bgr_frame = cv2.cvtColor(self.faces[i]['image'], cv2.COLOR_RGB2BGR)
+            cv2.imwrite(str(img_path), bgr_frame)
             self.faces[i]['image'] = None
 
     def reset(self):
@@ -158,11 +159,11 @@ class Camera(object):
         face_bbs = face_cascade.detectMultiScale(gray)
 
         # 顔の周りの余白
-        m = margin
         img_height = self.data.image.shape[0]
         img_width = self.data.image.shape[1]
         for face_bb in face_bbs:
             x, y, w, h = face_bb
+            m = w // 2 # 左右に2倍となるマージンにする
             # 切り取った画像を取得
             rgb_image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             upper = y-m if y-m>0 else 0
