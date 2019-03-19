@@ -138,13 +138,10 @@ class Camera(object):
             return False
         return True
 
-    def shoot_dummy(self):
+    def shoot_dummy(self, main_path):
         self.data.date = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
 
-        if self.name == 'Camera1':
-            path = '/Users/taro/Documents/straggler-search-system/data/maigo_search/camera_data/dummy/Camera1_dummy.jpg'
-        else:
-            path = '/Users/taro/Documents/straggler-search-system/data/maigo_search/camera_data/dummy/Camera2_dummy.jpg'
+        path = '{}/data/maigo_search/camera_data/dummy/{}_dummy.jpg'.format(main_path, self.name)
         frame = cv2.imread(path)
         self.data.image = frame
         frame = self.process(frame)
@@ -162,13 +159,17 @@ class Camera(object):
 
         # 顔の周りの余白
         m = margin
+        img_height = self.data.image.shape[0]
+        img_width = self.data.image.shape[1]
         for face_bb in face_bbs:
             x, y, w, h = face_bb
             # 切り取った画像を取得
             rgb_image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             upper = y-m if y-m>0 else 0
             left = x-m if x-m>0 else 0
-            cropped_image = rgb_image[upper:y+h+m, left:x+w+m, :]
+            bottom = img_height if img_height < y+h+m else y+h+m
+            right = img_width if img_width < x+w+m else x+w+m
+            cropped_image = rgb_image[upper:bottom, left:right, :]
 
             face = {
                 'image': cropped_image,

@@ -114,7 +114,7 @@ class MaigoSearchEngine(object):
     def run(self):
         results = []
         for camera in self.cameras:
-            camera.shoot_dummy()
+            camera.shoot_dummy(str(main_path))
             #camera.start()
             #camera.shoot()
             #camera.stop()
