@@ -52,6 +52,6 @@ def align(image_paths, image_size=160, margin=44, gpu_memory_fraction=1.0):
             # aligned_image_paths.append(image_path)
         except:
             print('Cannot align: {}'.format(image_path))
-
-    aligned_images = np.stack(aligned_images)
+    if 0 < len(aligned_images):
+        aligned_images = np.stack(aligned_images)
     return aligned_images, aligned_indices
