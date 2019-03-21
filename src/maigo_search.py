@@ -24,7 +24,6 @@ from facenet.src import facenet
 from facenet.src.align import detect_face
 
 from models import FaceNetModel
-from utils import *
 from preprocess import align
 from camera import Camera
 from database import MaigoDataBase
@@ -134,7 +133,7 @@ class MaigoSearchEngine(object):
                 del camera.data.faces[idx]
             camera.data.features = np.array(features)
             for maigo in self.maigo_db.people:
-                found_ones = self.search(maigo['feature'], camera.data.features, n=10,)
+                found_ones = self.search(maigo['feature'], camera.data.features, n=11,)
                 if found_ones:
                     for person in found_ones:
                         person.update(camera.data.faces[person['index']])
@@ -156,9 +155,11 @@ class MaigoSearchEngine(object):
     
     def alert(self, results):
         #ResultViewer(results).print()
-        ResultViewer(results).show_gui()
+        rv =ResultViewer(results)
+        rv.save_result()
+        rv.show_gui()
 
-engine = MaigoSearchEngine(model_path, threshold=0.85)
+engine = MaigoSearchEngine(model_path, threshold=99)
 engine.build_maigo_db(maigo_db_path)
 engine.build_cameras(camera_configs_path)
 print(engine.cameras[1].name)

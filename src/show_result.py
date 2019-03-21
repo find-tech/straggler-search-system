@@ -1,10 +1,7 @@
-
-# !pip install PyQt5
 import sys
 import pickle
-from PyQt5.QtWidgets import QMainWindow, QApplication, QWidget, QAction, QTableWidget,QTableWidgetItem,QVBoxLayout
-from PyQt5.QtGui import QIcon
-from PyQt5.QtCore import pyqtSlot
+import tkinter as tk
+from PIL import Image, ImageTk
 
 class ResultViewer(object):
     """Result Viewer:
@@ -35,62 +32,71 @@ class ResultViewer(object):
         print(self.results)
 
     def show_gui(self):
-        app = QApplication(sys.argv)
-        ex = App(self.results)
-        sys.exit(app.exec_())
+        root = tk.Tk().title("Search Result")
+        f = ResultFrame(master=root, data=self.results)
+        f.pack()
+        f.mainloop()
 
-class App(QWidget):
+# 表示するイメージを保存する(表示されない対策)    
+gImage = []
 
-    def __init__(self, data):
-        super().__init__()
+class ResultFrame(tk.Frame):
+    def __init__(self, master, data):
+        tk.Frame.__init__(self, master, width=1540, height=1200)
         self.data = data
-        self.title = "PyQt5 table - pythonspot.com"
-        self.left = 300
-        self.top = 100
-        self.width = 1200
-        self.height = 800
-        self.initUI()
+        self.createWidgets()
+        self.master = master
 
-    def initUI(self):
-        self.setWindowTitle(self.title)
-        self.setGeometry(self.left, self.top, self.width, self.height)
+    def createWidgets(self):
+        outerFrame = tk.Frame(self)
+        tk.Label(outerFrame, text='迷子検索結果').pack(side=tk.TOP) # システム名
+        
 
-        self.createTable()
+        for datum in self.data:
+            lineFrame = tk.Frame(outerFrame, padx=5, pady=5)
+            lineFrame.place(relwidth=1.0)
 
-        # Add box layout, add table to box layout and add box layout to widget
-        self.layout = QVBoxLayout()
-        self.layout.addWidget(self.tableWidget) 
-        self.setLayout(self.layout) 
+            # カメラ
+            cameraFrame = tk.Frame(lineFrame, relief=tk.RIDGE, bd=2, padx=5, pady=5, width=200, height=200, bg='darkgray')
+            cameraFrame.propagate(False)
+            cameraFrame.place()
 
-        # Show widget
-        self.show()
+            tk.Label(cameraFrame, text=datum['camera_id']).pack(side=tk.TOP) # カメラ名
+            tk.Label(cameraFrame, text=datum['datetime']).pack(side=tk.TOP) # 日時
+            tk.Label(cameraFrame, text=datum['maigo']['maigo_name']).pack(side=tk.TOP) # 名前
+            tk.Label(cameraFrame, text=datum['maigo']['age']).pack(side=tk.TOP) # 年齢
+            tk.Label(cameraFrame, text=datum['maigo']['area']).pack(side=tk.TOP) # 地域
+            tk.Label(cameraFrame, text=datum['maigo']['gender']).pack(side=tk.TOP) # 性別
+            tk.Label(cameraFrame, text=datum['maigo']['image_path']).pack(side=tk.TOP) # 画像
+            
+            cameraFrame.pack(side=tk.LEFT)
 
-    def createTable(self):
-        # Create table
-        self.tableWidget = QTableWidget()
-        self.tableWidget.setRowCount(len(self.data))
-        self.tableWidget.setColumnCount(7)
+            for people in datum['found_people']:
+                score = people['score']
+                backColor = 'red' if score < 0.85 else 'darkgray'
+                faceFrame = tk.Frame(lineFrame, relief=tk.RIDGE, bd=2, padx=5, pady=5, width=120, height=200,bg=backColor)
+                faceFrame.propagate(False)
+                faceFrame.place()
 
-        i = 0
-        for line in self.data:
-            # ここの表示を作りこむ
-            self.tableWidget.setItem(i, 0, QTableWidgetItem(line['camera_id']))
-            j = 1
-            for people in line['found_people']:
-                self.tableWidget.setItem(i, j, QTableWidgetItem(str(people['score'])))
-                j += 1
-            i += 1
+                tk.Label(faceFrame, text=str(people['bounding_box'])).pack(side=tk.TOP) # BBox
+                tk.Label(faceFrame, text=str(people['index'])).pack(side=tk.TOP) # スコア
+                tk.Label(faceFrame, text=str(people['path'])).pack(side=tk.TOP) # 画像パス
+                tk.Label(faceFrame, text=str(score)).pack(side=tk.TOP) # スコア
 
-        self.tableWidget.move(0,0)
+                # 画像
+                import numpy as np
+                pilImage = Image.fromarray(people['image'])
+                img =  ImageTk.PhotoImage(image=pilImage)
+                gImage.append(img)
+                canvas = tk.Canvas(faceFrame, width=100, height=100, bg="black")
+                canvas.pack(side=tk.TOP)
+                canvas.create_image(50, 50, image=img)
+                
+                faceFrame.pack(side=tk.LEFT)
 
-        # table selection change
-        self.tableWidget.doubleClicked.connect(self.on_click)
+            lineFrame.pack(anchor=tk.W)
 
-    @pyqtSlot()
-    def on_click(self):
-        print("\n")
-        for currentQTableWidgetItem in self.tableWidget.selectedItems():
-            print(currentQTableWidgetItem.row(), currentQTableWidgetItem.column(), currentQTableWidgetItem.text())
+        outerFrame.place(x=0, y=0)
 
 if __name__ == "__main__":
     rv = ResultViewer(None)
