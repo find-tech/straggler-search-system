@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 import csv
 import datetime
 import os
@@ -134,7 +131,7 @@ class Camera(object):
         # 画面を表示する
         cv2.imshow('camera capture', frame)
 
-        k = cv2.waitKey(10) # 10 msec待つ
+        k = cv2.waitKey(1000) # 1 sec待つ
         if k == 27: # ESCキーで終了
             return False
         return True
@@ -161,6 +158,7 @@ class Camera(object):
         # 顔の周りの余白
         img_height = self.data.image.shape[0]
         img_width = self.data.image.shape[1]
+        frame_with_bbox = frame.copy()
         for face_bb in face_bbs:
             x, y, w, h = face_bb
             m = w // 2 # 左右に2倍となるマージンにする
@@ -180,6 +178,14 @@ class Camera(object):
             self.data.faces.append(face)
 
             #顔部分を四角で囲う
-            frame = cv2.rectangle(frame,(x-m,y-m),(x+w+m,y+h+m),(255,0,0),2)
+            cv2.rectangle(frame_with_bbox, (left, upper), (right, bottom), (255, 0, 0), 2) # 青で描画
 
-        return frame
+        return frame_with_bbox
+
+if __name__ == "__main__":
+
+    # 秋葉原にあるカメラでキャプチャ実行(という設定)
+    camera = Camera("Test Camera", 0, (35.7, 139.7), 'Camera_test', '../models/haarcascade_frontalface_default.xml')
+    camera.start()
+    camera.shoot()
+    camera.stop()
