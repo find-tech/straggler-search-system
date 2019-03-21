@@ -19,6 +19,9 @@ from sklearn.metrics.pairwise import euclidean_distances
 
 from preprocess import align
 
+import pandas as pd
+import folium
+import iso8601
 
 def load_image(image_path, width=None, height=None, mode='RGB'):
     image = Image.open(str(image_path))
@@ -50,3 +53,23 @@ def cluster_kmeans(vectors, labels, n_clusters,):
     plt.show()
 
     return pred_labels
+
+def create_maigo_map(df_maigo_position):
+    # カメラコンフィグの読み取り
+    df_camera_config = pd.read_csv("configs/camera_configs.csv")
+
+    # map表示用dfの作成
+    df_maigo_position.columns = ["device", "time"]
+    df_maigo_positon_time = pd.merge(df_maigo_position, df_camera_config, on = "device").loc[:, ["time", "latitude", "longtitude"]]
+
+    # mapの作成
+    # mapの初期位置の定義
+    _map = folium.Map(location=[df_maigo_positon_time.loc[0, "longtitude"], df_maigo_positon_time.loc[0, "latitude"]], zoom_start=10)
+
+    # 地図へマーカーを付与
+    for index, row in df_maigo_positon_time.iterrows():
+        time = iso8601.parse_date(row["time"]).strftime('%Y-%m-%d %H:%M:%S')
+        folium.Marker([row["longtitude"], row["latitude"]], popup = time).add_to(_map)
+
+    # 作成したmapをviewに作成
+    _map.save('../view/map.html')
