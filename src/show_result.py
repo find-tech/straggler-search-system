@@ -34,12 +34,30 @@ class ResultViewer(object):
 
     def show_gui(self):
         root = tk.Tk()
-        root.tk.call('tk', 'scaling', 1.5)
         root.title("Search Result")
+        root.geometry("1280x780")
+        root.tk.call('tk', 'scaling', 1.5)
         gRoot.append(root)
-        f = ResultFrame(master=root, data=self.results)
-        f.pack()
-        f.mainloop()
+        
+        # Canvas Widget を生成
+        canvas = tk.Canvas(root, width=2000)
+
+        # Scrollbar を生成して配置
+        bar = tk.Scrollbar(root, orient=tk.VERTICAL)
+        bar.pack(side=tk.RIGHT, fill=tk.Y)
+        bar.config(command=canvas.yview)
+
+        # Canvas Widget を配置
+        canvas.config(yscrollcommand=bar.set)
+        canvas.config(scrollregion=(0,0,1280,3000)) #スクロール範囲
+        canvas.pack(side=tk.LEFT, fill=tk.BOTH)
+
+        frame = ResultFrame(master=canvas, data=self.results)
+
+        # Frame Widgetを Canvas Widget上に配置
+        canvas.create_window((0,0), window=frame, anchor=tk.NW, width=canvas.cget('width'))
+
+        root.mainloop()
 
 # 表示するイメージを保存する(表示されない対策)    
 gImage = []
@@ -47,7 +65,7 @@ gImage = []
 class ResultFrame(tk.Frame):
     def __init__(self, master, data):
         self.frame_back_color = '#333333'
-        tk.Frame.__init__(self, master, width=1520, height=1000, bg=self.frame_back_color)
+        tk.Frame.__init__(self, master, width=1520, height=3000, bg=self.frame_back_color)
         self.data = data
         self.createWidgets()
         self.master = master
