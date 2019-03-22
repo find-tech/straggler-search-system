@@ -152,19 +152,13 @@ class MaigoSearchEngine(object):
                         }
                     results.append(result)
             # camera.data.reset()
-        if results:
-            self.alert(results)
         return results
-    
-    def alert(self, results):
-        #ResultViewer(results).print()
-        rv =ResultViewer(results)
-        rv.save_result()
-        rv.show_gui()
 
-engine = MaigoSearchEngine(model_path, threshold=99)
-engine.build_maigo_db(maigo_db_path)
-engine.build_cameras(camera_configs_path)
-print(engine.cameras[1].name)
-engine.maigo_db.people[0]
-engine.run()
+if __name__ == "__main__":
+    engine = MaigoSearchEngine(model_path, threshold=99)
+    engine.build_maigo_db(maigo_db_path)
+    engine.build_cameras(camera_configs_path)
+    results = engine.run()
+    rv =ResultViewer(results)
+    rv.save_result()
+    rv.show_gui()
