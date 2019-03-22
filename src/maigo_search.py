@@ -123,6 +123,7 @@ class MaigoSearchEngine(object):
             features = []
             del_indices = []
             for i, face in enumerate(camera.data.faces):
+                print(camera.name + "/face_" + str(i + 1))
                 image, _ = align([str(face['path'])])
                 if len(image) == 0:
                     del_indices.append(i)
