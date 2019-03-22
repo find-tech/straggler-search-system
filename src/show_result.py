@@ -32,7 +32,9 @@ class ResultViewer(object):
         print(self.results)
 
     def show_gui(self):
-        root = tk.Tk().title("Search Result")
+        root = tk.Tk()
+        root.title("Search Result")
+        gRoot.append(root)
         f = ResultFrame(master=root, data=self.results)
         f.pack()
         f.mainloop()
@@ -98,9 +100,10 @@ class ResultFrame(tk.Frame):
 
         outerFrame.place(x=0, y=0)
 
+# Windowインスタンス保存用 (代入しないと消えて落ちる)
+gRoot = []
+
 if __name__ == "__main__":
     rv = ResultViewer(None)
     rv.load_result()
-    #rv.print()
-    #rv.save_txt()
     rv.show_gui()
