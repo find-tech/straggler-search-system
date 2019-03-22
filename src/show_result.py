@@ -1,6 +1,7 @@
 import sys
 import pickle
 import tkinter as tk
+import numpy as np
 from PIL import Image, ImageTk
 
 class ResultViewer(object):
@@ -33,6 +34,7 @@ class ResultViewer(object):
 
     def show_gui(self):
         root = tk.Tk()
+        root.tk.call('tk', 'scaling', 1.5)
         root.title("Search Result")
         gRoot.append(root)
         f = ResultFrame(master=root, data=self.results)
@@ -44,57 +46,72 @@ gImage = []
 
 class ResultFrame(tk.Frame):
     def __init__(self, master, data):
-        tk.Frame.__init__(self, master, width=1540, height=1200)
+        self.frame_back_color = '#333333'
+        tk.Frame.__init__(self, master, width=1520, height=1000, bg=self.frame_back_color)
         self.data = data
         self.createWidgets()
         self.master = master
 
     def createWidgets(self):
-        outerFrame = tk.Frame(self)
-        tk.Label(outerFrame, text='迷子検索結果').pack(side=tk.TOP) # システム名
+        outerFrame = tk.Frame(self, bg=self.frame_back_color)
+        tk.Label(outerFrame, text='迷子検索結果', font=("",25), bg=self.frame_back_color, fg="white").pack(side=tk.TOP, anchor=tk.NW) # システム名
         
-
         for datum in self.data:
-            lineFrame = tk.Frame(outerFrame, padx=5, pady=5)
+            lineFrame = tk.Frame(outerFrame, padx=5, pady=5, bg=self.frame_back_color)
             lineFrame.place(relwidth=1.0)
 
-            # カメラ
-            cameraFrame = tk.Frame(lineFrame, relief=tk.RIDGE, bd=2, padx=5, pady=5, width=200, height=200, bg='darkgray')
+            # 画像
+            pilImage = Image.open("../" + datum['maigo']['image_path'])
+            #h, w = pilImage.size
+            new_pilImage = pilImage.resize((147, 147), resample=Image.BICUBIC)
+            img =  ImageTk.PhotoImage(image=new_pilImage)
+            gImage.append(img)
+            canvas = tk.Canvas(lineFrame, width=144, height=144, bg="black")
+            canvas.pack(side=tk.LEFT)
+            canvas.create_image(72, 72, image=img)
+
+            # カメラ情報
+            backColor = '#ddd'
+            cameraFrame = tk.Frame(lineFrame, padx=5, pady=5, width=200, height=144, bg=backColor)
             cameraFrame.propagate(False)
             cameraFrame.place()
-
-            tk.Label(cameraFrame, text=datum['camera_id']).pack(side=tk.TOP) # カメラ名
-            tk.Label(cameraFrame, text=datum['datetime']).pack(side=tk.TOP) # 日時
-            tk.Label(cameraFrame, text=datum['maigo']['maigo_name']).pack(side=tk.TOP) # 名前
-            tk.Label(cameraFrame, text=datum['maigo']['age']).pack(side=tk.TOP) # 年齢
-            tk.Label(cameraFrame, text=datum['maigo']['area']).pack(side=tk.TOP) # 地域
-            tk.Label(cameraFrame, text=datum['maigo']['gender']).pack(side=tk.TOP) # 性別
-            tk.Label(cameraFrame, text=datum['maigo']['image_path']).pack(side=tk.TOP) # 画像
             
-            cameraFrame.pack(side=tk.LEFT)
-
+            tk.Label(cameraFrame, text=datum['camera_id'], bg=backColor).pack(side=tk.TOP, anchor=tk.NW) # カメラ名
+            tk.Label(cameraFrame, text=datum['datetime'], bg=backColor).pack(side=tk.TOP, anchor=tk.NW) # 日時
+            tk.Label(cameraFrame, text=datum['maigo']['maigo_name'], bg=backColor).pack(side=tk.TOP, anchor=tk.NW) # 名前
+            tk.Label(cameraFrame, text=datum['maigo']['age'], bg=backColor).pack(side=tk.TOP, anchor=tk.NW) # 年齢
+            tk.Label(cameraFrame, text=datum['maigo']['area'], bg=backColor).pack(side=tk.TOP, anchor=tk.NW) # 地域
+            tk.Label(cameraFrame, text=datum['maigo']['gender'], bg=backColor).pack(side=tk.TOP, anchor=tk.NW) # 性別
+            tk.Label(cameraFrame, text=datum['maigo']['image_path'], bg=backColor).pack(side=tk.TOP, anchor=tk.NW) # 画像
+            
+            cameraFrame.pack(side=tk.LEFT, padx=1)
+            
+            # スペーサー
+            spacer = tk.Label(lineFrame, text="", bg=self.frame_back_color)
+            spacer.pack(side=tk.LEFT, padx=5)
+            
             for people in datum['found_people']:
-                score = people['score']
-                backColor = 'red' if score < 0.85 else 'darkgray'
-                faceFrame = tk.Frame(lineFrame, relief=tk.RIDGE, bd=2, padx=5, pady=5, width=120, height=200,bg=backColor)
+                score = round(people['score'], 3)
+                backColor = 'red' if score < 0.85 else '#aaa'
+                faceFrame = tk.Frame(lineFrame, relief=tk.SOLID, bd=0, padx=5, pady=5, width=94, height=144, bg=backColor)
                 faceFrame.propagate(False)
                 faceFrame.place()
 
-                tk.Label(faceFrame, text=str(people['bounding_box'])).pack(side=tk.TOP) # BBox
-                tk.Label(faceFrame, text=str(people['index'])).pack(side=tk.TOP) # スコア
-                tk.Label(faceFrame, text=str(people['path'])).pack(side=tk.TOP) # 画像パス
-                tk.Label(faceFrame, text=str(score)).pack(side=tk.TOP) # スコア
-
                 # 画像
-                import numpy as np
                 pilImage = Image.fromarray(people['image'])
-                img =  ImageTk.PhotoImage(image=pilImage)
+                new_pilImage = pilImage.resize((83, 83), resample=Image.BICUBIC)
+                img =  ImageTk.PhotoImage(image=new_pilImage)
                 gImage.append(img)
-                canvas = tk.Canvas(faceFrame, width=100, height=100, bg="black")
+                canvas = tk.Canvas(faceFrame, width=80, height=80, bg="black")
                 canvas.pack(side=tk.TOP)
-                canvas.create_image(50, 50, image=img)
+                canvas.create_image(40, 40, image=img)
+
+                #tk.Label(faceFrame, text=str(people['bounding_box'])).pack(side=tk.TOP) # BBox
+                tk.Label(faceFrame, text=str(people['index']), bg=backColor).pack(side=tk.TOP) # Index
+                #tk.Label(faceFrame, text=str(people['path'])).pack(side=tk.TOP) # 画像パス
+                tk.Label(faceFrame, text=str(score), bg=backColor).pack(side=tk.TOP) # スコア
                 
-                faceFrame.pack(side=tk.LEFT)
+                faceFrame.pack(side=tk.LEFT, padx=4)
 
             lineFrame.pack(anchor=tk.W)
 
