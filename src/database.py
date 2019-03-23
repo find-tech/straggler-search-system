@@ -38,8 +38,11 @@ class MaigoDataBase(object):
     def load(self, path, encoding='utf-8'):
         with open(str(path), 'r', encoding=encoding) as f:
             reader = csv.DictReader(f)
+            if reader.fieldnames[0] != 'maigo_name':
+                raise ValueError("Please Check Encodeing (=UTF-8 without BOM?): {}".format(str(path)))
             for row in reader:
-                self.people.append(row)
+                if row['deleted'] != '1': # 削除済み以外
+                    self.people.append(row)
         return
 
 

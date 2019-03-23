@@ -1,7 +1,8 @@
-maigo_name,age,gender,area,image_path
-齋藤飛鳥,20,女,東京,data/maigo_search/maigo_data/SaitoAsuka1.jpg
-齋藤飛鳥,20,女,東京,data/maigo_search/maigo_data/SaitoAsuka2.jpg
-齋藤飛鳥,20,女,東京,data/maigo_search/maigo_data/SaitoAsuka3.jpg
-吉沢亮,25,男,東京,data/maigo_search/maigo_data/YoshizawaRyo.jpg
-生田絵梨花,22,女,東京,data/maigo_search/maigo_data/IkutaErika.jpg
-test,30,女,どこか,data/maigo_search/maigo_data/m1.jpg
+maigo_name,age,gender,area,deleted,image_path
+Deleted Red,10,女性,大田区,1,data/maigo_search/maigo_data/red.png
+齋藤飛鳥1,20,女性,港区,0,data/maigo_search/maigo_data/SaitoAsuka1.jpg
+齋藤飛鳥2,20,女性,港区,0,data/maigo_search/maigo_data/SaitoAsuka2.jpg
+齋藤飛鳥3,20,女性,港区,0,data/maigo_search/maigo_data/SaitoAsuka3.jpg
+吉沢亮,25,男性,千代田区,0,data/maigo_search/maigo_data/YoshizawaRyo.jpg
+生田絵梨花,22,女性,文京区,0,data/maigo_search/maigo_data/IkutaErika.jpg
+Test Name,30,女性,文京区,0,data/maigo_search/maigo_data/m1.jpg

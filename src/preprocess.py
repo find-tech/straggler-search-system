@@ -33,10 +33,14 @@ def align(image_paths, image_size=160, margin=32, gpu_memory_fraction=1.0):
     # aligned_image_paths = []
     for i,image_path in enumerate(image_paths):
         # print('%1d: %s' % (i, image_path))
-        img = misc.imread(str(image_path))
-        img_size = np.asarray(img.shape)[0:2]
         try:
+            img = misc.imread(str(image_path))
+            img = img[:,:,0:3] # apply for 32bit image
+            img_size = np.asarray(img.shape)[0:2]
             bounding_boxes, _ = detect_face.detect_face(img, minsize, pnet, rnet, onet, threshold, factor)
+            if len(bounding_boxes) == 0:
+                print('No bounding boxes: {}'.format(image_path))
+                continue
             det = np.squeeze(bounding_boxes[0, 0:4])
             bb = np.zeros(4, dtype=np.int32)
             bb[0] = np.maximum(det[0]-margin/2, 0)
