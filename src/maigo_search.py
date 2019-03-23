@@ -34,8 +34,8 @@ from show_result import ResultViewer
 
 main_path = pathlib.Path().cwd().parent
 model_path = main_path / 'models' / '20180402-114759' / '20180402-114759.pb'
-maigo_db_path = main_path / 'src' / 'configs' / 'maigo_db.csv'
-camera_configs_path = main_path / 'src' / 'configs' / 'camera_configs.csv'
+maigo_db_path = main_path / 'configs' / 'maigo_db.csv'
+camera_configs_path = main_path / 'configs' / 'camera_configs.csv'
 img_extention = 'jpg'
 
 class MaigoSearchEngine(object):
