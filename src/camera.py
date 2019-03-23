@@ -141,6 +141,8 @@ class Camera(object):
 
         path = '{}/data/maigo_search/camera_data/dummy/{}_dummy.jpg'.format(main_path, self.name)
         frame = cv2.imread(path)
+        if frame == None:
+            raise ValueError("Can't Read Camera Image: {}".format(path))
         self.data.image = frame
         frame = self.process(frame)
         return
