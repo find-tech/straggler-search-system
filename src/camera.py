@@ -111,7 +111,7 @@ class Camera(object):
         """Capture video from camera
 
         """
-        self.data.date = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
+        self.data.date = datetime.datetime.now().strftime('%m/%d %H:%M')
 
         # Webカメラから画像を1枚読み込む
         _, frame = self.cap.read()
@@ -137,7 +137,7 @@ class Camera(object):
         return True
 
     def shoot_dummy(self, main_path):
-        self.data.date = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
+        self.data.date = datetime.datetime.now().strftime('%m/%d %H:%M')
 
         path = '{}/data/maigo_search/camera_data/dummy/{}_dummy.jpg'.format(main_path, self.name)
         frame = cv2.imread(path)
