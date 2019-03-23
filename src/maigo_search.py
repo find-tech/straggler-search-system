@@ -62,7 +62,7 @@ class MaigoSearchEngine(object):
 
         self.maigo_db.load(maigo_db_path)
         for maigo in self.maigo_db.people:
-            image, extracted_filepath = align([main_path / maigo['image_path']], image_size=self.model.input_image_size, margin=44, gpu_memory_fraction=1.0)
+            image, _ = align([main_path / maigo['image_path']], image_size=self.model.input_image_size, margin=32, gpu_memory_fraction=1.0)
             if len(image) == 0:
                 raise ValueError("Image is too small: {}".format(maigo['image_path']))
             feature = self.model(image[0])

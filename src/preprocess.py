@@ -15,7 +15,7 @@ from facenet.src import facenet
 from facenet.src.align import detect_face
 
 
-def align(image_paths, image_size=160, margin=44, gpu_memory_fraction=1.0):
+def align(image_paths, image_size=160, margin=32, gpu_memory_fraction=1.0):
     minsize = 20 # minimum size of face
     threshold = [0.6, 0.7, 0.7]  # three steps's threshold
     factor = 0.709 # scale factor
