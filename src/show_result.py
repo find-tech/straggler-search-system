@@ -35,7 +35,7 @@ class ResultViewer(object):
     def show_gui(self):
         root = tk.Tk()
         root.title("Search Result")
-        root.geometry("1440x1080")
+        root.geometry("1358x1040")
         root.tk.call('tk', 'scaling', 1.5)
         gRoot.append(root)
         
@@ -49,7 +49,7 @@ class ResultViewer(object):
 
         # Canvas Widget を配置
         canvas.config(yscrollcommand=bar.set)
-        canvas.config(scrollregion=(0,0,1600,2000)) #スクロール範囲
+        canvas.config(scrollregion=(0,0,1600,1500)) #スクロール範囲
         canvas.pack(side=tk.LEFT, fill=tk.BOTH)
 
         frame = ResultFrame(master=canvas, data=self.results)
@@ -94,11 +94,11 @@ class ResultFrame(tk.Frame):
             cameraFrame.propagate(False)
             cameraFrame.place()
             
-            tk.Label(cameraFrame, text=datum['maigo']['maigo_name'], bg=backColor).pack(side=tk.TOP, anchor=tk.NW) # 名前
-            tk.Label(cameraFrame, text=datum['maigo']['age'], bg=backColor).pack(side=tk.TOP, anchor=tk.NW) # 年齢
-            tk.Label(cameraFrame, text=datum['maigo']['area'], bg=backColor).pack(side=tk.TOP, anchor=tk.NW) # 地域
-            tk.Label(cameraFrame, text=datum['maigo']['gender'], bg=backColor).pack(side=tk.TOP, anchor=tk.NW) # 性別
-            tk.Label(cameraFrame, text=datum['maigo']['image_path'], bg=backColor).pack(side=tk.TOP, anchor=tk.NW) # 画像
+            tk.Label(cameraFrame, text="名前: " + datum['maigo']['maigo_name'], bg=backColor).pack(side=tk.TOP, anchor=tk.NW)
+            tk.Label(cameraFrame, text="年齢: " + datum['maigo']['age'], bg=backColor).pack(side=tk.TOP, anchor=tk.NW)
+            tk.Label(cameraFrame, text="地域: " + datum['maigo']['area'], bg=backColor).pack(side=tk.TOP, anchor=tk.NW)
+            tk.Label(cameraFrame, text="性別: " + datum['maigo']['gender'], bg=backColor).pack(side=tk.TOP, anchor=tk.NW)
+            tk.Label(cameraFrame, text="登録: " + datum['maigo']['datetime'], bg=backColor).pack(side=tk.TOP, anchor=tk.NW)
             
             cameraFrame.pack(side=tk.LEFT, padx=1)
             
