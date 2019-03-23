@@ -1,4 +1,5 @@
-camera_name,device,latitude,longtitude,storage_path
-Camera1,0,135,32,data/maigo_search/camera_data/Camera1
-Camera2,1,139.75354,35.693932,data/maigo_search/camera_data/Camera2
-Camera3,2,139.74354,35.483932,data/maigo_search/camera_data/Camera3
+camera_name,device,latitude,longitude,deleted,storage_path
+Camera0,0,35.699977,139.773972,1,data/maigo_search/camera_data/Camera0
+Camera1,1,35.699528,139.772674,0,data/maigo_search/camera_data/Camera1
+Camera2,2,139.75354,35.693932,0,data/maigo_search/camera_data/Camera2
+Camera3,3,139.74354,35.483932,0,data/maigo_search/camera_data/Camera3

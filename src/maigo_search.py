@@ -78,11 +78,13 @@ class MaigoSearchEngine(object):
         configs = pd.read_csv(str(camera_configs_path))
         for i in range(len(configs)):
             config = configs.loc[i, :]
+            if config.deleted == 1: # 削除済み
+                continue
             name = str(config.camera_name)
             device = int(config.device)
             latitude = config.latitude
-            longtitude = config.longtitude
-            pos = (latitude, longtitude)
+            longitude = config.longitude
+            pos = (latitude, longitude)
             storage_path = main_path / config.storage_path
             camera = Camera(name, device, pos, storage_path, '../models/haarcascade_frontalface_default.xml', 'jpg')
             self.cameras.append(camera)
