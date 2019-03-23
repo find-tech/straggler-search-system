@@ -138,23 +138,27 @@ class MaigoSearchEngine(object):
             for idx in del_indices[::-1]:
                 del camera.data.faces[idx]
             camera.data.features = np.array(features)
-            for maigo in self.maigo_db.people:
+
+        for maigo in self.maigo_db.people:
+            found_all = []            
+            for camera in self.cameras:
                 found_ones = self.search(maigo['feature'], camera.data.features, n=11,)
                 if found_ones:
                     for person in found_ones:
                         person.update(camera.data.faces[person['index']])
                         person['image'] = cv2.cvtColor(cv2.imread(str(person['path'])), cv2.COLOR_BGR2RGB)
-                    # if camera.save, load images.
+                        person['camera_id'] = camera.name
+                        person['datetime'] = camera.data.date
                     
-                    result = {
-                        'maigo': maigo,
-                        'camera_id': camera.name,
-                        'datetime': camera.data.date,
-                        'found_people': found_ones,
-                        'shot_image': cv2.cvtColor(cv2.imread(str(camera.data.image_path)), cv2.COLOR_BGR2RGB),
-                        }
-                    results.append(result)
-            # camera.data.reset()
+                    found_all.extend(found_ones)
+                    
+            found_all_sorted = sorted(found_all, key=lambda x:x['score'])
+            result = {
+                'maigo': maigo,
+                'found_people': found_all_sorted,
+                'shot_image': cv2.cvtColor(cv2.imread(str(camera.data.image_path)), cv2.COLOR_BGR2RGB),
+                }
+            results.append(result)
         return results
 
 if __name__ == "__main__":

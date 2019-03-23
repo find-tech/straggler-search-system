@@ -35,7 +35,7 @@ class ResultViewer(object):
     def show_gui(self):
         root = tk.Tk()
         root.title("Search Result")
-        root.geometry("1280x780")
+        root.geometry("1440x1080")
         root.tk.call('tk', 'scaling', 1.5)
         gRoot.append(root)
         
@@ -49,7 +49,7 @@ class ResultViewer(object):
 
         # Canvas Widget を配置
         canvas.config(yscrollcommand=bar.set)
-        canvas.config(scrollregion=(0,0,1280,3000)) #スクロール範囲
+        canvas.config(scrollregion=(0,0,1600,2000)) #スクロール範囲
         canvas.pack(side=tk.LEFT, fill=tk.BOTH)
 
         frame = ResultFrame(master=canvas, data=self.results)
@@ -65,7 +65,7 @@ gImage = []
 class ResultFrame(tk.Frame):
     def __init__(self, master, data):
         self.frame_back_color = '#333333'
-        tk.Frame.__init__(self, master, width=1520, height=3000, bg=self.frame_back_color)
+        tk.Frame.__init__(self, master, width=1600, height=1500, bg=self.frame_back_color)
         self.data = data
         self.createWidgets()
         self.master = master
@@ -88,14 +88,12 @@ class ResultFrame(tk.Frame):
             canvas.pack(side=tk.LEFT)
             canvas.create_image(72, 72, image=img)
 
-            # カメラ情報
+            # 迷子情報
             backColor = '#ddd'
-            cameraFrame = tk.Frame(lineFrame, padx=5, pady=5, width=200, height=144, bg=backColor)
+            cameraFrame = tk.Frame(lineFrame, padx=5, pady=5, width=144, height=144, bg=backColor)
             cameraFrame.propagate(False)
             cameraFrame.place()
             
-            tk.Label(cameraFrame, text=datum['camera_id'], bg=backColor).pack(side=tk.TOP, anchor=tk.NW) # カメラ名
-            tk.Label(cameraFrame, text=datum['datetime'], bg=backColor).pack(side=tk.TOP, anchor=tk.NW) # 日時
             tk.Label(cameraFrame, text=datum['maigo']['maigo_name'], bg=backColor).pack(side=tk.TOP, anchor=tk.NW) # 名前
             tk.Label(cameraFrame, text=datum['maigo']['age'], bg=backColor).pack(side=tk.TOP, anchor=tk.NW) # 年齢
             tk.Label(cameraFrame, text=datum['maigo']['area'], bg=backColor).pack(side=tk.TOP, anchor=tk.NW) # 地域
@@ -108,7 +106,7 @@ class ResultFrame(tk.Frame):
             spacer = tk.Label(lineFrame, text="", bg=self.frame_back_color)
             spacer.pack(side=tk.LEFT, padx=5)
             
-            for people in datum['found_people']:
+            for people in datum['found_people'][:10]:
                 score = round(people['score'], 3)
                 backColor = 'red' if score < 0.85 else '#aaa'
                 faceFrame = tk.Frame(lineFrame, relief=tk.SOLID, bd=0, padx=5, pady=5, width=94, height=144, bg=backColor)
@@ -124,10 +122,9 @@ class ResultFrame(tk.Frame):
                 canvas.pack(side=tk.TOP)
                 canvas.create_image(40, 40, image=img)
 
-                #tk.Label(faceFrame, text=str(people['bounding_box'])).pack(side=tk.TOP) # BBox
-                tk.Label(faceFrame, text=str(people['index']), bg=backColor).pack(side=tk.TOP) # Index
-                #tk.Label(faceFrame, text=str(people['path'])).pack(side=tk.TOP) # 画像パス
+                tk.Label(faceFrame, text=people['camera_id'] + " #" + str(people['index']), bg=backColor).pack(side=tk.TOP) # カメラ名 + Index
                 tk.Label(faceFrame, text=str(score), bg=backColor).pack(side=tk.TOP) # スコア
+                tk.Label(faceFrame, text=people['datetime'], bg=backColor).pack(side=tk.TOP) # 日時
                 
                 faceFrame.pack(side=tk.LEFT, padx=4)
 
