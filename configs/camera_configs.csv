@@ -1,5 +1,5 @@
 camera_name,device,latitude,longitude,deleted,storage_path
 Camera0,0,35.699977,139.773972,1,data/maigo_search/camera_data/Camera0
 Camera1,1,35.699528,139.772674,0,data/maigo_search/camera_data/Camera1
-Camera2,2,139.75354,35.693932,0,data/maigo_search/camera_data/Camera2
-Camera3,3,139.74354,35.483932,0,data/maigo_search/camera_data/Camera3
+Camera2,2,35.698437,139.771325,0,data/maigo_search/camera_data/Camera2
+Camera3,3,35.697627,139.772505,0,data/maigo_search/camera_data/Camera3
