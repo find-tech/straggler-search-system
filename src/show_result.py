@@ -136,7 +136,7 @@ class ResultFrame(tk.Frame):
                 canvas.create_image(40, 40, image=img)
 
                 tk.Label(faceFrame, text=tag, bg=backColor).pack(side=tk.TOP) # カメラ名 + Index
-                tk.Label(faceFrame, text=people['datetime'], bg=backColor).pack(side=tk.TOP) # 日時
+                tk.Label(faceFrame, text=people['datetime'].strftime('%m/%d %H:%M'), bg=backColor).pack(side=tk.TOP) # 日時
                 tk.Label(faceFrame, text=str(score), bg=backColor).pack(side=tk.TOP) # スコア
                 
                 faceFrame.pack(side=tk.LEFT, padx=4)
@@ -149,11 +149,14 @@ class ResultFrame(tk.Frame):
         print("start demo")
 
     def callback(self, event):
-        camera_name, face_id = event.widget.widgetName.split(" ")
+        camera_name, _ = event.widget.widgetName.split(" ")
         target = [c for c in self.cameras if camera_name == c.name][0]
         print("clicked :", target.pos)
-        s = pd.Series({"device":target.device, "time":target.data.date})
-        utils.create_maigo_map(s)
+
+        # データ作成して渡す
+        time = str(target.data.date.isoformat())
+        df = pd.DataFrame([[target.device, time]], columns=["device", "time"])
+        utils.create_maigo_map(df)
 
 # Windowインスタンス保存用 (代入しないと消えて落ちる)
 gRoot = []
