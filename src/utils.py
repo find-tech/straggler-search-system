@@ -56,7 +56,7 @@ def cluster_kmeans(vectors, labels, n_clusters,):
 
 def create_maigo_map(df_maigo_position):
     # カメラコンフィグの読み取り
-    df_camera_config = pd.read_csv("configs/camera_configs.csv")
+    df_camera_config = pd.read_csv("../configs/camera_configs.csv")
 
     # map表示用dfの作成
     df_maigo_position.columns = ["device", "time"]

@@ -2,7 +2,9 @@ import sys
 import pickle
 import tkinter as tk
 import numpy as np
+import pandas as pd
 from PIL import Image, ImageTk
+import utils
 
 class ResultViewer(object):
     """Result Viewer:
@@ -52,7 +54,7 @@ class ResultViewer(object):
         canvas.config(scrollregion=(0,0,1920,1500)) #スクロール範囲
         canvas.pack(side=tk.LEFT, fill=tk.BOTH)
 
-        frame = ResultFrame(master=canvas, data=self.results)
+        frame = ResultFrame(master=canvas, results=self.results)
 
         # Frame Widgetを Canvas Widget上に配置
         canvas.create_window((0,0), window=frame, anchor=tk.NW, width=canvas.cget('width'))
@@ -63,17 +65,23 @@ class ResultViewer(object):
 gImage = []
 
 class ResultFrame(tk.Frame):
-    def __init__(self, master, data):
+    def __init__(self, master, results):
         self.frame_back_color = '#333333'
         tk.Frame.__init__(self, master, width=1920, height=1500, bg=self.frame_back_color)
-        self.data = data
+        self.cameras = results[0]
+        self.data = results[1]
         self.createWidgets()
         self.master = master
 
     def createWidgets(self):
         outerFrame = tk.Frame(self, bg=self.frame_back_color)
-        tk.Label(outerFrame, text='迷子検索結果', font=("", 25, "bold"), bg=self.frame_back_color, fg="white").pack(side=tk.TOP, anchor=tk.NW) # システム名
         
+        # ヘッダ
+        headerFrame = tk.Frame(outerFrame, bg=self.frame_back_color)
+        tk.Label(headerFrame, text='迷子検索結果', font=("", 25, "bold"), bg=self.frame_back_color, fg="white").pack(side=tk.LEFT, anchor=tk.W) # システム名
+        tk.Button(headerFrame, text='Demo', cursor="hand2", command=self.demo).pack(side=tk.RIGHT, anchor=tk.E, padx=7)
+        headerFrame.pack(side=tk.TOP, fill=tk.BOTH)
+
         for datum in self.data:
             lineFrame = tk.Frame(outerFrame, padx=5, pady=5, bg=self.frame_back_color)
             lineFrame.place(relwidth=1.0)
@@ -120,11 +128,14 @@ class ResultFrame(tk.Frame):
                 new_pilImage = pilImage.resize((83, 83), resample=Image.BICUBIC)
                 img =  ImageTk.PhotoImage(image=new_pilImage)
                 gImage.append(img)
-                canvas = tk.Canvas(faceFrame, width=80, height=80, bg="black")
+                canvas = tk.Canvas(faceFrame, width=80, height=80, bg="black", cursor="hand2")
+                canvas.bind("<Button-1>", self.callback)
+                tag = people['camera_id'] + " #" + str(people['index'])
+                canvas.widgetName = tag
                 canvas.pack(side=tk.TOP)
                 canvas.create_image(40, 40, image=img)
 
-                tk.Label(faceFrame, text=people['camera_id'] + " #" + str(people['index']), bg=backColor).pack(side=tk.TOP) # カメラ名 + Index
+                tk.Label(faceFrame, text=tag, bg=backColor).pack(side=tk.TOP) # カメラ名 + Index
                 tk.Label(faceFrame, text=people['datetime'], bg=backColor).pack(side=tk.TOP) # 日時
                 tk.Label(faceFrame, text=str(score), bg=backColor).pack(side=tk.TOP) # スコア
                 
@@ -133,6 +144,16 @@ class ResultFrame(tk.Frame):
             lineFrame.pack(anchor=tk.W)
 
         outerFrame.place(x=10, y=0)
+
+    def demo(self):
+        print("start demo")
+
+    def callback(self, event):
+        camera_name, face_id = event.widget.widgetName.split(" ")
+        target = [c for c in self.cameras if camera_name == c.name][0]
+        print("clicked :", target.pos)
+        s = pd.Series({"device":target.device, "time":target.data.date})
+        utils.create_maigo_map(s)
 
 # Windowインスタンス保存用 (代入しないと消えて落ちる)
 gRoot = []

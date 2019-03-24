@@ -118,7 +118,7 @@ class MaigoSearchEngine(object):
         return cands
 
     def run(self):
-        results = []
+
         for camera in self.cameras:
             camera.shoot_dummy(str(main_path))
             #camera.start()
@@ -138,7 +138,8 @@ class MaigoSearchEngine(object):
             for idx in del_indices[::-1]:
                 del camera.data.faces[idx]
             camera.data.features = np.array(features)
-
+        
+        results_data = []
         for maigo in self.maigo_db.people:
             found_all = []            
             for camera in self.cameras:
@@ -153,12 +154,13 @@ class MaigoSearchEngine(object):
                     found_all.extend(found_ones)
                     
             found_all_sorted = sorted(found_all, key=lambda x:x['score'])
-            result = {
+            result_data = {
                 'maigo': maigo,
                 'found_people': found_all_sorted,
                 'shot_image': cv2.cvtColor(cv2.imread(str(camera.data.image_path)), cv2.COLOR_BGR2RGB),
                 }
-            results.append(result)
+            results_data.append(result_data)
+        results = [self.cameras, results_data]
         return results
 
 if __name__ == "__main__":
