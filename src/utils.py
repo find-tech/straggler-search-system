@@ -60,16 +60,20 @@ def create_maigo_map(df_maigo_position):
 
     # map表示用dfの作成
     df_maigo_position.columns = ["device", "time"]
-    df_maigo_positon_time = pd.merge(df_maigo_position, df_camera_config, on = "device").loc[:, ["time", "latitude", "longtitude"]]
+    df_maigo_positon_time = pd.merge(df_maigo_position, df_camera_config, on = "device").loc[:, ["time", "latitude", "longitude"]]
 
     # mapの作成
     # mapの初期位置の定義
-    _map = folium.Map(location=[df_maigo_positon_time.loc[0, "longtitude"], df_maigo_positon_time.loc[0, "latitude"]], zoom_start=10)
+    _map = folium.Map(location=[df_maigo_positon_time.loc[0, "longitude"], df_maigo_positon_time.loc[0, "latitude"]], zoom_start=10)
 
     # 地図へマーカーを付与
-    for index, row in df_maigo_positon_time.iterrows():
+    for _, row in df_maigo_positon_time.iterrows():
         time = iso8601.parse_date(row["time"]).strftime('%Y-%m-%d %H:%M:%S')
-        folium.Marker([row["longtitude"], row["latitude"]], popup = time).add_to(_map)
+        folium.Marker([row["latitude"], row["longitude"]], popup = time).add_to(_map)
 
     # 作成したmapをviewに作成
     _map.save('../view/map.html')
+
+if __name__ == "__main__":
+    df_camera_config = pd.read_csv("../configs/test_data_map.csv")
+    create_maigo_map(df_camera_config)

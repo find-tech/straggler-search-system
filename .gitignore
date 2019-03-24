@@ -111,6 +111,7 @@ venv.bak/
 /private
 /TaroNakasendo
 /work
+/view
 .vscode
 result.pkl
 result.txt
