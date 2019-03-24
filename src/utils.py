@@ -64,7 +64,7 @@ def create_maigo_map(df_maigo_position):
 
     # mapの作成
     # mapの初期位置の定義
-    _map = folium.Map(location=[df_maigo_positon_time.loc[0, "longitude"], df_maigo_positon_time.loc[0, "latitude"]], zoom_start=10)
+    _map = folium.Map(location=[df_maigo_positon_time.loc[0, "latitude"], df_maigo_positon_time.loc[0, "longitude"]], zoom_start=10)
 
     # 地図へマーカーを付与
     for _, row in df_maigo_positon_time.iterrows():
