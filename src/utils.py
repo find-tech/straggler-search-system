@@ -75,7 +75,7 @@ def create_maigo_map(df_maigo_position):
     # 作成したmapをviewに作成
     _map.save('../view/map.html')
     url = pathlib.Path().cwd() / '../view/map.html'
-    webbrowser.open(str(url))
+    webbrowser.get("chrome").open(str(url))
 
 if __name__ == "__main__":
     df_camera_config = pd.read_csv("../configs/test_data_map.csv")

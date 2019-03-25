@@ -120,10 +120,10 @@ class MaigoSearchEngine(object):
     def run(self):
 
         for camera in self.cameras:
-            camera.shoot_dummy(str(main_path))
-            #camera.start()
-            #camera.shoot()
-            #camera.stop()
+            #camera.shoot_dummy(str(main_path))
+            camera.start()
+            camera.shoot()
+            camera.stop()
             camera.data.save()  # if save, images are removed.
             features = []
             del_indices = []
@@ -137,12 +137,20 @@ class MaigoSearchEngine(object):
                 features.append(self.model(image))
             for idx in del_indices[::-1]:
                 del camera.data.faces[idx]
-            camera.data.features = np.array(features)
+                
+            if len(features) == 0:
+                camera.data.features = None
+            elif len(features) == 1:
+                camera.data.features = np.array(features).reshape(-1, 1)
+            else:
+                camera.data.features = np.array(features)
         
         results_data = []
         for maigo in self.maigo_db.people:
             found_all = []            
             for camera in self.cameras:
+                if camera.data.features is None:
+                    continue
                 found_ones = self.search(maigo['feature'], camera.data.features, n=11,)
                 if found_ones:
                     for person in found_ones:

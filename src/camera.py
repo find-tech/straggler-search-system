@@ -183,7 +183,7 @@ class Camera(object):
         for face_cropped in cropped:
             #顔部分を四角で囲う
             (left, upper, right, bottom) = face_cropped
-            cv2.rectangle(frame, (left, upper), (right, bottom), (255, 0, 0), 2) # 青で描画
+            #cv2.rectangle(frame, (left, upper), (right, bottom), (255, 0, 0), 2) # 青で描画
 
         return frame
 
