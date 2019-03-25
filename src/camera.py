@@ -106,7 +106,9 @@ class Camera(object):
     def stop(self):
         self.cap.release()
         cv2.destroyAllWindows()
-
+        del self.cap
+        self.cap = None
+        
     def shoot(self, mirror=True, size=None):
         """Capture video from camera
 

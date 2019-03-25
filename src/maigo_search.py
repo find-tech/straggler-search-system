@@ -137,11 +137,12 @@ class MaigoSearchEngine(object):
                 features.append(self.model(image))
             for idx in del_indices[::-1]:
                 del camera.data.faces[idx]
-                
+             
+            print(len(features))
             if len(features) == 0:
                 camera.data.features = None
             elif len(features) == 1:
-                camera.data.features = np.array(features).reshape(-1, 1)
+                camera.data.features = np.array(features).reshape(1, -1)
             else:
                 camera.data.features = np.array(features)
         
