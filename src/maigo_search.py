@@ -122,29 +122,35 @@ class MaigoSearchEngine(object):
         for camera in self.cameras:
             #camera.shoot_dummy(str(main_path))
             camera.start()
-            camera.shoot()
-            camera.stop()
-            camera.data.save()  # if save, images are removed.
-            features = []
-            del_indices = []
-            for i, face in enumerate(camera.data.faces):
-                print(camera.name + "/face_" + str(i + 1))
-                image, _ = align([str(face['path'])])
-                if len(image) == 0:
-                    del_indices.append(i)
+            hasFace = False
+            # 顔が検出されるまで撮り続ける
+            while not hasFace:
+                hasFace = camera.shoot()
+                if not hasFace:
                     continue
-                image = image[0]
-                features.append(self.model(image))
-            for idx in del_indices[::-1]:
-                del camera.data.faces[idx]
-             
-            print(len(features))
-            if len(features) == 0:
-                camera.data.features = None
-            elif len(features) == 1:
-                camera.data.features = np.array(features).reshape(1, -1)
-            else:
-                camera.data.features = np.array(features)
+                camera.stop()
+                camera.data.save()  # if save, images are removed.
+                features = []
+                del_indices = []
+                for i, face in enumerate(camera.data.faces):
+                    print(camera.name + "/face_" + str(i + 1))
+                    image, _ = align([str(face['path'])])
+                    if len(image) == 0:
+                        del_indices.append(i)
+                        continue
+                    image = image[0]
+                    features.append(self.model(image))
+                for idx in del_indices[::-1]:
+                    del camera.data.faces[idx]
+                
+                print(len(features))
+                if len(features) == 0:
+                    camera.data.features = None
+                elif len(features) == 1:
+                    camera.data.features = np.array(features).reshape(1, -1)
+                else:
+                    camera.data.features = np.array(features)
+                hasFace = 0 < len(camera.data.faces)
         
         results_data = []
         for maigo in self.maigo_db.people:
@@ -178,5 +184,5 @@ if __name__ == "__main__":
     engine.build_cameras(camera_configs_path)
     results = engine.run()
     rv =ResultViewer(results)
-    rv.save_result()
     rv.show_gui()
+    rv.save_result()

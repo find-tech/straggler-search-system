@@ -122,10 +122,12 @@ class Camera(object):
         if mirror:
             frame = frame[:,::-1]
 
-        # フレームをリサイズ
-        # sizeは例えば(800, 600)
-        if size is not None and len(size) == 2:
-            frame = cv2.resize(frame, size)
+        # フレームをリサイズ アスペクト比を考慮
+        if frame.shape == (480, 640, 3):
+            size = (1024, 768)
+        else:
+            size = (1024, 576)
+        frame = cv2.resize(frame, size)
 
         self.data.image = frame
         frame = self.process(frame)
@@ -133,10 +135,10 @@ class Camera(object):
         # 画面を表示する
         cv2.imshow('camera capture', frame)
 
-        k = cv2.waitKey(10) # 10 msec待つ
-        if k == 27: # ESCキーで終了
-            return False
-        return True
+        _ = cv2.waitKey(1000) # 1000 msec待つ
+        
+        hasFace = 0 < len(self.data.faces)
+        return hasFace
 
     def shoot_dummy(self, main_path):
         self.data.date = datetime.datetime.now()
@@ -185,7 +187,7 @@ class Camera(object):
         for face_cropped in cropped:
             #顔部分を四角で囲う
             (left, upper, right, bottom) = face_cropped
-            #cv2.rectangle(frame, (left, upper), (right, bottom), (255, 0, 0), 2) # 青で描画
+            cv2.rectangle(frame, (left, upper), (right, bottom), (255, 0, 0), 2) # 青で描画
 
         return frame
 
@@ -196,5 +198,5 @@ if __name__ == "__main__":
     camera.start()
     for _ in range(50):
         # サイズ指定しないと落ちる
-        camera.shoot(size=(800, 600))
+        camera.shoot()
     camera.stop()
