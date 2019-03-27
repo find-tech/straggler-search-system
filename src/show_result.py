@@ -118,7 +118,7 @@ class ResultFrame(tk.Frame):
             spacer.pack(side=tk.LEFT, padx=5)
             
             for people in datum['found_people'][:10]:
-                score = round(people['score'], 3)
+                score = people['score']
                 backColor = 'red' if score < 0.85 else '#aaa'
                 faceFrame = tk.Frame(lineFrame, relief=tk.SOLID, bd=0, padx=5, pady=2, width=96, height=160, bg=backColor)
                 faceFrame.propagate(False)
@@ -139,7 +139,7 @@ class ResultFrame(tk.Frame):
                 canvas.create_image(40, 40, image=img)
 
                 tk.Label(faceFrame, text=people['datetime'].strftime('%m/%d %H:%M'), bg=backColor).pack(side=tk.TOP) # 日時
-                tk.Label(faceFrame, text=str(score), bg=backColor).pack(side=tk.TOP) # スコア
+                tk.Label(faceFrame, text='{:.3f}'.format(score), bg=backColor).pack(side=tk.TOP) # スコア
                 
                 faceFrame.pack(side=tk.LEFT, padx=4)
 
