@@ -128,7 +128,7 @@ class MaigoSearchEngine(object):
                 hasFace = camera.shoot()
                 if not hasFace:
                     continue
-                camera.stop()
+                #camera.stop()
                 camera.data.save()  # if save, images are removed.
                 features = []
                 del_indices = []
@@ -151,6 +151,7 @@ class MaigoSearchEngine(object):
                 else:
                     camera.data.features = np.array(features)
                 hasFace = 0 < len(camera.data.faces)
+            camera.stop()
         
         results_data = []
         for maigo in self.maigo_db.people:
@@ -184,5 +185,5 @@ if __name__ == "__main__":
     engine.build_cameras(camera_configs_path)
     results = engine.run()
     rv =ResultViewer(results)
-    rv.show_gui()
     rv.save_result()
+    rv.show_gui()

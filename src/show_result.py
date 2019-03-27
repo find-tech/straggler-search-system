@@ -3,6 +3,8 @@ import pickle
 import tkinter as tk
 import numpy as np
 import pandas as pd
+import matplotlib
+matplotlib.use('tkagg')
 from PIL import Image, ImageTk
 import utils
 
