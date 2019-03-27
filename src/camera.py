@@ -93,10 +93,11 @@ class Camera(object):
             represented as (latitude, longtitude)
         data (CameraData): Data of the shot image.
     """
-    def __init__(self, name, device, pos, storage_path, cascade_file, extention='jpg'):
+    def __init__(self, name, device, pos, dummy, storage_path, cascade_file, extention='jpg'):
         self.name = name
         self.device = device
         self.pos = pos
+        self.useDummy = (dummy == 1)
         self.cascade_file = cascade_file
         self.data = CameraData(storage_path, extention)
 
@@ -196,7 +197,7 @@ class Camera(object):
 if __name__ == "__main__":
 
     # 秋葉原にあるカメラでキャプチャ実行(という設定)
-    camera = Camera("Test Camera", 0, (35.7, 139.7), 'Camera_test', '../models/haarcascade_frontalface_default.xml')
+    camera = Camera("Test Camera", 0, (35.7, 139.7), 0, 'Camera_test', '../models/haarcascade_frontalface_default.xml')
     camera.start()
     for _ in range(50):
         # サイズ指定しないと落ちる

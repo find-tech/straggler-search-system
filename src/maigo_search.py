@@ -85,8 +85,9 @@ class MaigoSearchEngine(object):
             latitude = config.latitude
             longitude = config.longitude
             pos = (latitude, longitude)
+            dummy = config.dummy
             storage_path = main_path / config.storage_path
-            camera = Camera(name, device, pos, storage_path, '../models/haarcascade_frontalface_default.xml', 'jpg')
+            camera = Camera(name, device, pos, dummy, storage_path, '../models/haarcascade_frontalface_default.xml', 'jpg')
             self.cameras.append(camera)
         return
 
@@ -120,12 +121,18 @@ class MaigoSearchEngine(object):
     def run(self):
 
         for camera in self.cameras:
-            #camera.shoot_dummy(str(main_path))
-            camera.start()
+            useDummy = camera.useDummy
+            if useDummy:
+                camera.shoot_dummy(str(main_path))
+            else:
+                camera.start()
             hasFace = False
             # 顔が検出されるまで撮り続ける
             while not hasFace:
-                hasFace = camera.shoot()
+                if not useDummy:
+                    hasFace = camera.shoot()
+                else:
+                    hasFace = True
                 if not hasFace:
                     continue
                 #camera.stop()
@@ -151,7 +158,9 @@ class MaigoSearchEngine(object):
                 else:
                     camera.data.features = np.array(features)
                 hasFace = 0 < len(camera.data.faces)
-            camera.stop()
+            
+            if not useDummy:
+                camera.stop()
         
         results_data = []
         for maigo in self.maigo_db.people:
