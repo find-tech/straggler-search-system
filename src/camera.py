@@ -116,6 +116,8 @@ class Camera(object):
         self.data.date = datetime.datetime.now()
 
         # Webカメラから画像を1枚読み込む
+        if self.cap is None:
+            self.start()
         _, frame = self.cap.read()
 
         # 鏡のように映るか否か
