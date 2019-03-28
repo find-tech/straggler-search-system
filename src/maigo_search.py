@@ -3,6 +3,7 @@ import datetime
 import os
 import pathlib
 import sys
+import pickle
 
 from PIL import Image
 import cv2
@@ -58,15 +59,31 @@ class MaigoSearchEngine(object):
         self.cameras = []
         self.threshold = threshold
 
+    def load_feature(self, path):
+        if not os.path.exists(path):
+            return False, None
+        with open(path, 'rb') as f:
+            feature = pickle.load(f)
+        return True, feature
+
+    def save_feature(self, feature, path):
+        with open(path, 'wb') as f:
+            pickle.dump(feature, f)
+
     def build_maigo_db(self, db_path):
 
         self.maigo_db.load(maigo_db_path)
+        print("迷子DB構築中...")
         for maigo in self.maigo_db.people:
             print(maigo['maigo_name'])
-            image, _ = align([main_path / maigo['image_path']])
-            if len(image) == 0:
-                raise ValueError("Image Not Found or Invalid Image: {}".format(maigo['image_path']))
-            feature = self.model(image[0])
+            isExist, feature = self.load_feature(main_path / (maigo['image_path'] + ".pkl"))
+            if not isExist:
+                image, _ = align([main_path / maigo['image_path']])
+                if len(image) == 0:
+                    raise ValueError("Image Not Found or Invalid Image: {}".format(maigo['image_path']))
+                feature = self.model(image[0])
+                if maigo['maigo_name'] != "RealTime":
+                    self.save_feature(feature, main_path / (maigo['image_path'] + ".pkl"))
             maigo['feature']= feature
     
     def build_cameras(self, camera_configs_path):

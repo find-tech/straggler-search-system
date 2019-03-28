@@ -1,5 +1,5 @@
 maigo_name,age,gender,area,datetime,deleted,image_path
-Maigo ,40,男性,埼玉,03/25 13:21,0,data/maigo_search/maigo_data/demo.jpg
+RealTime ,30,男性,秋葉原,03/25 13:21,0,data/maigo_search/maigo_data/demo.jpg
 齋藤飛鳥1,20,女性,港区,03/26 11:21,0,data/maigo_search/maigo_data/SaitoAsuka1.jpg
 齋藤飛鳥2,20,女性,港区,03/26 11:21,0,data/maigo_search/maigo_data/SaitoAsuka2.jpg
 齋藤飛鳥3,20,女性,港区,03/26 11:21,0,data/maigo_search/maigo_data/SaitoAsuka3.jpg
