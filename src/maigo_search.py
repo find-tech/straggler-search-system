@@ -158,12 +158,18 @@ class MaigoSearchEngine(object):
                 del_indices = []
                 for i, face in enumerate(camera.data.faces):
                     print(camera.name + "/face_" + str(i + 1))
-                    image, _ = align([str(face['path'])])
-                    if len(image) == 0:
-                        del_indices.append(i)
-                        continue
-                    image = image[0]
-                    features.append(self.model(image))
+                    
+                    isExist, feature = self.load_feature((str(face['path']) + ".pkl"))
+                    if not isExist:
+                        image, _ = align([str(face['path'])])
+                        if len(image) == 0:
+                            del_indices.append(i)
+                            continue
+                        image = image[0]
+                        feature = self.model(image)
+                        if camera.name != "RealTimeCamera":
+                            self.save_feature(feature, str(face['path']) + ".pkl")
+                    features.append(feature)
                 for idx in del_indices[::-1]:
                     del camera.data.faces[idx]
                 
