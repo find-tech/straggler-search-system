@@ -39,7 +39,7 @@ class ResultViewer(object):
     def show_gui(self):
         root = tk.Tk()
         root.title("迷子検索システム")
-        root.geometry("1410x1040")
+        root.geometry("1280x1040")
         root.tk.call('tk', 'scaling', 1.5)
         gRoot.append(root)
         
@@ -81,7 +81,7 @@ class ResultFrame(tk.Frame):
         # ヘッダ
         headerFrame = tk.Frame(outerFrame, bg=self.frame_back_color)
         tk.Label(headerFrame, text='迷子検索結果', font=("", 25, "bold"), bg=self.frame_back_color, fg="white").pack(side=tk.LEFT, anchor=tk.W) # システム名
-        tk.Button(headerFrame, text='Demo', cursor="hand2", command=self.demo).pack(side=tk.RIGHT, anchor=tk.E, padx=7)
+        tk.Button(headerFrame, text='迷子登録', cursor="hand2", command=self.demo).pack(side=tk.RIGHT, anchor=tk.E, padx=7)
         headerFrame.pack(side=tk.TOP, fill=tk.BOTH)
 
         for datum in self.data:
@@ -119,7 +119,7 @@ class ResultFrame(tk.Frame):
             spacer = tk.Label(lineFrame, text="", bg=self.frame_back_color)
             spacer.pack(side=tk.LEFT, padx=5)
             
-            for people in datum['found_people'][:10]:
+            for people in datum['found_people'][:9]:
                 score = people['score']
                 backColor = 'red' if score < 0.85 else '#aaa'
                 faceFrame = tk.Frame(lineFrame, relief=tk.SOLID, bd=0, padx=5, pady=2, width=96, height=160, bg=backColor)
@@ -143,7 +143,7 @@ class ResultFrame(tk.Frame):
                 tk.Label(faceFrame, text=people['datetime'].strftime('%m/%d %H:%M'), bg=backColor).pack(side=tk.TOP) # 日時
                 tk.Label(faceFrame, text='{:.3f}'.format(score), bg=backColor).pack(side=tk.TOP) # スコア
                 
-                faceFrame.pack(side=tk.LEFT, padx=4)
+                faceFrame.pack(side=tk.LEFT, padx=2)
 
             lineFrame.pack(anchor=tk.W)
 
