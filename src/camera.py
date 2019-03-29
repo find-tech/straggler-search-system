@@ -110,7 +110,7 @@ class Camera(object):
         del self.cap
         self.cap = None
         
-    def shoot(self, mirror=True, size=None):
+    def shoot(self, main_path, mirror=True, size=None):
         """Capture video from camera
 
         """
@@ -131,6 +131,8 @@ class Camera(object):
         else:
             size = (1024, 576)
         frame = cv2.resize(frame, size)
+        path = '{}/data/maigo_search/camera_data/dummy/Camera0_dummy.jpg'.format(main_path)
+        cv2.imwrite(path, frame)
 
         self.data.image = frame
         frame = self.process(frame)
@@ -199,7 +201,7 @@ if __name__ == "__main__":
     # 秋葉原にあるカメラでキャプチャ実行(という設定)
     camera = Camera("Test Camera", 0, (35.7, 139.7), 0, 'Camera_test', '../models/haarcascade_frontalface_default.xml')
     camera.start()
-    for _ in range(50):
-        # サイズ指定しないと落ちる
-        camera.shoot()
+    main_path = pathlib.Path().cwd().parent
+    for _ in range(10):
+        camera.shoot(main_path)
     camera.stop()

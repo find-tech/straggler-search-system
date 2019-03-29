@@ -1,5 +1,7 @@
 import sys
 import pickle
+import cv2
+import pathlib
 import tkinter as tk
 import numpy as np
 import pandas as pd
@@ -7,6 +9,8 @@ import matplotlib
 matplotlib.use('tkagg')
 from PIL import Image, ImageTk
 import utils
+
+min_score = 0.98
 
 class ResultViewer(object):
     """Result Viewer:
@@ -80,8 +84,8 @@ class ResultFrame(tk.Frame):
         
         # ヘッダ
         headerFrame = tk.Frame(outerFrame, bg=self.frame_back_color)
-        tk.Label(headerFrame, text='迷子検索結果', font=("", 25, "bold"), bg=self.frame_back_color, fg="white").pack(side=tk.LEFT, anchor=tk.W) # システム名
-        tk.Button(headerFrame, text='迷子登録', cursor="hand2", command=self.demo).pack(side=tk.RIGHT, anchor=tk.E, padx=7)
+        tk.Label(headerFrame, text='MICCAL - 迷子検索結果', font=("", 25, "bold"), bg=self.frame_back_color, fg="white").pack(side=tk.LEFT, anchor=tk.W) # システム名
+        tk.Button(headerFrame, text='地図表示', cursor="hand2", command=self.demo).pack(side=tk.RIGHT, anchor=tk.E, padx=7)
         headerFrame.pack(side=tk.TOP, fill=tk.BOTH)
 
         for datum in self.data:
@@ -121,12 +125,12 @@ class ResultFrame(tk.Frame):
             
             for people in datum['found_people'][:9]:
                 score = people['score']
-                backColor = 'red' if score < 0.85 else '#aaa'
+                backColor = 'red' if score < min_score else '#aaa'
                 faceFrame = tk.Frame(lineFrame, relief=tk.SOLID, bd=0, padx=5, pady=2, width=96, height=160, bg=backColor)
                 faceFrame.propagate(False)
                 faceFrame.place()
 
-                tag = people['camera_id'] + " #" + str(people['index'])
+                tag = people['camera_id'] + " " + str(people['index'])
                 tk.Label(faceFrame, text=tag, bg=backColor).pack(side=tk.TOP) # カメラ名 + Index
 
                 # 画像
@@ -151,11 +155,35 @@ class ResultFrame(tk.Frame):
 
     def demo(self):
         print("start demo")
+        main_path = pathlib.Path().cwd().parent
+        camera_path = '{}/map.png'.format(main_path)
+        img = cv2.imread(camera_path)
+        cv2.imshow("MAP", img)
 
     def callback(self, event):
-        camera_name, _ = event.widget.widgetName.split(" ")
+        camera_name, face_id = event.widget.widgetName.split(" ")
         target = [c for c in self.cameras if camera_name == c.name][0]
-        print("clicked :", target.pos)
+        face = target.data.faces[int(face_id)]
+        print("clicked :", target.pos, face['bounding_box'])
+        main_path = pathlib.Path().cwd().parent
+        camera_path = '{}/data/maigo_search/camera_data/dummy/{}_dummy.jpg'.format(main_path, target.name)
+        img = cv2.imread(camera_path)
+        img_height = img.shape[0]
+        img_width = img.shape[1]
+
+        x, y, w, h = face['bounding_box']
+        m = w // 2 # 左右に2倍となるマージンにする
+        # 切り取った画像を取得
+        upper = y-m if y-m>0 else 0
+        left = x-m if x-m>0 else 0
+        bottom = img_height if img_height < y+h+m else y+h+m
+        right = img_width if img_width < x+w+m else x+w+m
+
+        cv2.rectangle(img, (left, upper), (right, bottom), (255, 0, 0), 2) # 青で描画
+        drawed_path = '{}/data/maigo_search/camera_data/result.jpg'.format(main_path)
+        cv2.imwrite(drawed_path,  img)
+        cv2.destroyAllWindows()
+        cv2.imshow("CAMERA IMAGE", img)
 
         # データ作成して渡す
         time = str(target.data.date.isoformat())

@@ -147,7 +147,7 @@ class MaigoSearchEngine(object):
             # 顔が検出されるまで撮り続ける
             while not hasFace:
                 if not useDummy:
-                    hasFace = camera.shoot()
+                    hasFace = camera.shoot(str(main_path))
                 else:
                     hasFace = True
                 if not hasFace:
@@ -218,4 +218,4 @@ if __name__ == "__main__":
     results = engine.run()
     rv =ResultViewer(results)
     rv.save_result()
-    rv.show_gui()
+    #rv.show_gui()
