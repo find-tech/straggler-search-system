@@ -110,7 +110,7 @@ class Camera(object):
         del self.cap
         self.cap = None
         
-    def shoot(self, main_path, mirror=True, size=None):
+    def shoot(self, main_path, mirror=True, size=None, for_maigo=False):
         """Capture video from camera
 
         """
@@ -132,6 +132,9 @@ class Camera(object):
             size = (1024, 576)
         frame = cv2.resize(frame, size)
         path = '{}/data/maigo_search/camera_data/dummy/Camera0_dummy.jpg'.format(main_path)
+        if for_maigo:
+            path = '{}/data/maigo_search/maigo_data/demo.jpg'.format(main_path)
+            
         cv2.imwrite(path, frame)
 
         self.data.image = frame
@@ -203,5 +206,6 @@ if __name__ == "__main__":
     camera.start()
     main_path = pathlib.Path().cwd().parent
     for _ in range(10):
-        camera.shoot(main_path)
+        #camera.shoot(main_path)
+        camera.shoot(main_path, for_maigo=True)
     camera.stop()
