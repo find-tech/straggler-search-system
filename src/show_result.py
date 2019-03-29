@@ -42,7 +42,7 @@ class ResultViewer(object):
 
     def show_gui(self):
         root = tk.Tk()
-        root.title("迷子検索システム")
+        root.title("迷子検索システム  miccal")
         root.geometry("1280x1040")
         root.tk.call('tk', 'scaling', 1.5)
         gRoot.append(root)
@@ -84,7 +84,7 @@ class ResultFrame(tk.Frame):
         
         # ヘッダ
         headerFrame = tk.Frame(outerFrame, bg=self.frame_back_color)
-        tk.Label(headerFrame, text='MICCAL - 迷子検索結果', font=("", 25, "bold"), bg=self.frame_back_color, fg="white").pack(side=tk.LEFT, anchor=tk.W) # システム名
+        tk.Label(headerFrame, text='miccal  -  迷子検索結果', font=("", 25, "bold"), bg=self.frame_back_color, fg="white").pack(side=tk.LEFT, anchor=tk.W) # システム名
         tk.Button(headerFrame, text='地図表示', cursor="hand2", command=self.demo).pack(side=tk.RIGHT, anchor=tk.E, padx=7)
         headerFrame.pack(side=tk.TOP, fill=tk.BOTH)
 
@@ -183,7 +183,8 @@ class ResultFrame(tk.Frame):
         drawed_path = '{}/data/maigo_search/camera_data/result.jpg'.format(main_path)
         cv2.imwrite(drawed_path,  img)
         cv2.destroyAllWindows()
-        cv2.imshow("CAMERA IMAGE", img)
+        title = camera_name + "  -  Face" + face_id + "  -  " + target.data.date.strftime('%Y/%m/%d %H:%M')
+        cv2.imshow(title, img)
 
         # データ作成して渡す
         time = str(target.data.date.isoformat())
